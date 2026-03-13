@@ -71,8 +71,8 @@ const App = () => {
   const likeBlog = async (blog) => {
     try {
       const updatedBlog = {
-        user: blog.user.id || blog.user._id,
-        likes: blog.likes + 1,
+        user: blog.user?.id || blog.user?._id || blog.user,
+        likes: (blog.likes || 0) + 1,
         author: blog.author,
         title: blog.title,
         url: blog.url
@@ -143,7 +143,9 @@ const App = () => {
           </button>
         </div>
       )}
-    {blogs.map(blog =>
+    {[...blogs]
+    .sort((a, b) => b.likes - a.likes)
+    .map(blog =>
     <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
 )}
     </div>
