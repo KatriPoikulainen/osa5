@@ -12,16 +12,16 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState(null)
-  const [showBlogForm, setShowBlogForm] = useState(false) 
+  const [showBlogForm, setShowBlogForm] = useState(false)
 
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
-   useEffect(() => {
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -44,26 +44,26 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
+    } catch {
       showNotification('wrong username or password', 'error')
     }
   }
   const handleLogout = () => {
-  window.localStorage.removeItem('loggedBlogappUser')
-  setUser(null)  
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
   }
   const addBlog = async (blogObject) => {
     try {
-    const newBlog = await blogService.create(blogObject)
-    setBlogs(blogs.concat(newBlog))
-    setShowBlogForm(false)
-    showNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-  } catch (exception) {
-    showNotification('failed to create blog', 'error')
+      const newBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(newBlog))
+      setShowBlogForm(false)
+      showNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    } catch {
+      showNotification('failed to create blog', 'error')
+    }
   }
-}
   const showNotification = (message, type = 'success') => {
-    setNotification({message, type})
+    setNotification({ message, type })
     setTimeout(() => {
       setNotification(null)
     }, 5000)
@@ -81,20 +81,20 @@ const App = () => {
       setBlogs(blogs.map(b =>
         b.id === blog.id ? { ...returnedBlog, user: blog.user } : b
       ))
-    } catch (exception) {
+    } catch {
       showNotification('failed to like blog', 'error')
     }
   }
-const removeBlog = async (blog) => {
-  const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
-  if (!ok) {
-    return
-  }
-  try {
-    await blogService.remove(blog.id)
-    setBlogs(blogs.filter(b => b.id !== blog.id))
+  const removeBlog = async (blog) => {
+    const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    if (!ok) {
+      return
+    }
+    try {
+      await blogService.remove(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
 
-    } catch (exception) {
+    } catch {
       showNotification('failed to remove blog', 'error')
     }
   }
@@ -105,7 +105,7 @@ const removeBlog = async (blog) => {
 
 
 
-   if (user === null) {
+  if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
@@ -155,11 +155,11 @@ const removeBlog = async (blog) => {
           </button>
         </div>
       )}
-    {[...blogs]
-    .sort((a, b) => b.likes - a.likes)
-    .map(blog =>
-    <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} user={user} />
-)}
+      {[...blogs]
+        .sort((a, b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} user={user} />
+        )}
     </div>
   )
 }

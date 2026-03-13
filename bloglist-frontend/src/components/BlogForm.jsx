@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 const BlogForm = ({ createBlog }) => {
-const [title, setTitle] = useState('')
-const [author, setAuthor] = useState('')
-const [url, setUrl] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
 
   const handleSubmit = (event) => {
@@ -26,10 +26,10 @@ const [url, setUrl] = useState('')
       <form onSubmit={handleSubmit}>
         <div>
             title:
-        <input
-          value={title}
-          onChange={({target}) => setTitle(target.value)}
-        />
+          <input
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+          />
         </div>
         <div>
           author:

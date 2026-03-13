@@ -9,12 +9,12 @@ const Blog = ({ blog, likeBlog, removeBlog, user }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-const blogUserId = blog.user?.id || blog.user?._id || blog.user
-const loggedUserId = user?.id || user?._id
-const canRemove =
+  const blogUserId = blog.user?.id || blog.user?._id || blog.user
+  const loggedUserId = user?.id || user?._id
+  const canRemove =
   blogUserId === loggedUserId || blog.user?.username === user?.username
 
-   return (
+  return (
     <div style={blogStyle}>
       {!showDetails ? (
         <div>
