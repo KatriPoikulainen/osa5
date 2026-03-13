@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 
 
 const App = () => {
@@ -10,9 +11,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
   const [showBlogForm, setShowBlogForm] = useState(false) 
 
@@ -54,31 +52,23 @@ const App = () => {
   window.localStorage.removeItem('loggedBlogappUser')
   setUser(null)  
   }
-  const addBlog = async event => {
-    event.preventDefault()
+  const addBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create({
-        title,
-        author,
-        url
-      })
-      setBlogs(blogs.concat(newBlog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setShowBlogForm(false)
-      showNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-    } catch (exception) {
-      showNotification('failed to create blog', 'error')
-    }
+    const newBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(newBlog))
+    setShowBlogForm(false)
+    showNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+  } catch (exception) {
+    showNotification('failed to create blog', 'error')
   }
+}
   const showNotification = (message, type = 'success') => {
     setNotification({message, type})
     setTimeout(() => {
       setNotification(null)
     }, 5000)
   }
-  if (user === null) {
+   if (user === null) {
     return (
       <div>
         <h2>Log in to application</h2>
@@ -122,34 +112,10 @@ const App = () => {
       )}
       {showBlogForm && (
         <div>
-          <h2>create new</h2>
-          <form onSubmit={addBlog}>
-            <div>
-              title:
-              <input
-                value={title}
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-            <div>
-              author:
-              <input
-                value={author}
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-            <div>
-              url:
-              <input
-                value={url}
-                onChange={({ target }) => setUrl(target.value)}
-              />
-            </div>
-            <button type="submit">create</button>
-            <button type="button" onClick={() => setShowBlogForm(false)}>
-              cancel
-            </button>
-          </form>
+          <BlogForm createBlog={addBlog} />
+          <button type="button" onClick={() => setShowBlogForm(false)}>
+            cancel
+          </button>
         </div>
       )}
       {blogs.map(blog =>
