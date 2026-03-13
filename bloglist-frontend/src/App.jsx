@@ -68,6 +68,31 @@ const App = () => {
       setNotification(null)
     }, 5000)
   }
+  const likeBlog = async (blog) => {
+    try {
+      const updatedBlog = {
+        user: blog.user.id || blog.user._id,
+        likes: blog.likes + 1,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
+      setBlogs(blogs.map(b =>
+        b.id === blog.id ? { ...returnedBlog, user: blog.user } : b
+      ))
+    } catch (exception) {
+      showNotification('failed to like blog', 'error')
+    }
+  }
+
+
+
+
+
+
+
+
    if (user === null) {
     return (
       <div>
@@ -118,9 +143,9 @@ const App = () => {
           </button>
         </div>
       )}
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+    {blogs.map(blog =>
+    <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+)}
     </div>
   )
 }
