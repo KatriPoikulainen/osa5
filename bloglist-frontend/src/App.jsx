@@ -85,7 +85,19 @@ const App = () => {
       showNotification('failed to like blog', 'error')
     }
   }
+const removeBlog = async (blog) => {
+  const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+  if (!ok) {
+    return
+  }
+  try {
+    await blogService.remove(blog.id)
+    setBlogs(blogs.filter(b => b.id !== blog.id))
 
+    } catch (exception) {
+      showNotification('failed to remove blog', 'error')
+    }
+  }
 
 
 
@@ -146,7 +158,7 @@ const App = () => {
     {[...blogs]
     .sort((a, b) => b.likes - a.likes)
     .map(blog =>
-    <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />
+    <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} user={user} />
 )}
     </div>
   )
