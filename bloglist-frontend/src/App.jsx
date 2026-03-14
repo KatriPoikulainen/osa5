@@ -69,22 +69,24 @@ const App = () => {
     }, 5000)
   }
   const likeBlog = async (blog) => {
-    try {
-      const updatedBlog = {
-        user: blog.user?.id || blog.user?._id || blog.user,
-        likes: (blog.likes || 0) + 1,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url
-      }
-      const returnedBlog = await blogService.update(blog.id, updatedBlog)
-      setBlogs(blogs.map(b =>
-        b.id === blog.id ? { ...returnedBlog, user: blog.user } : b
-      ))
-    } catch {
-      showNotification('failed to like blog', 'error')
+  try {
+    const updatedBlog = {
+      user: blog.user?.id || blog.user?._id || blog.user,
+      likes: (blog.likes || 0) + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
     }
+    const returnedBlog = await blogService.update(blog.id, updatedBlog)
+    setBlogs(prevBlogs =>
+      prevBlogs.map(b =>
+        b.id === blog.id ? { ...returnedBlog, user: blog.user } : b
+      )
+    )
+  } catch {
+    showNotification('failed to like blog', 'error')
   }
+}
   const removeBlog = async (blog) => {
     const ok = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
     if (!ok) {
@@ -155,10 +157,16 @@ const App = () => {
           </button>
         </div>
       )}
-      {[...blogs]
-        .sort((a, b) => b.likes - a.likes)
-        .map(blog =>
-          <Blog key={blog.id} blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} user={user} />
+{[...blogs]
+  .sort((a, b) => b.likes - a.likes)
+  .map(blog =>
+    <Blog
+      key={blog.id}
+      blog={blog}
+      likeBlog={likeBlog}
+      removeBlog={removeBlog}
+      user={user}
+    />
         )}
     </div>
   )
