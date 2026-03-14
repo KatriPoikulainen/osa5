@@ -69,3 +69,4 @@ test('if like button is clicked twice, event handler is called twice', async () 
 
   expect(mockHandler.mock.calls).toHaveLength(2)
 })
+
