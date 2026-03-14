@@ -81,5 +81,27 @@ test.describe('Blog app', () => {
       await blog.getByRole('button', { name: 'like' }).click()
       await expect(blog.getByText('likes 1')).toBeVisible()
     })
+
+    test('a blog can be removed by the user who added it', async ({ page }) => {
+  const title = `Blog to remove ${Date.now()}`
+  await page.getByRole('button', { name: 'create new blog' }).click()
+
+  const inputs = page.getByRole('textbox')
+  await inputs.nth(0).fill(title)
+  await inputs.nth(1).fill('Katri')
+  await inputs.nth(2).fill('http://remove.test')
+  await page.getByRole('button', { name: 'create' }).click()
+
+  const blog = page.locator('.blog').filter({ hasText: `${title} Katri` }).first()
+  await expect(blog).toBeVisible()
+  await blog.getByRole('button', { name: 'view' }).click()
+
+  page.once('dialog', async dialog => {
+    await dialog.accept()
+  })
+
+  await blog.getByRole('button', { name: 'remove' }).click()
+  await expect(page.locator('.blog').filter({ hasText: `${title} Katri` })).toHaveCount(0)
+})
   })
 })
