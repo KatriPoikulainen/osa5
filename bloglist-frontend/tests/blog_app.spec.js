@@ -19,14 +19,12 @@ test.describe('Blog app', () => {
     await expect(page.getByText('username')).toBeVisible()
     await expect(page.getByText('password')).toBeVisible()
     await expect(page.getByRole('button', { name: 'login' })).toBeVisible()
-
-    
   })
 
   test.describe('Login', () => {
-
     test('succeeds with correct credentials', async ({ page }) => {
       const inputs = page.getByRole('textbox')
+
       await inputs.nth(0).fill('mluukkai')
       await inputs.nth(1).fill('salainen')
       await page.getByRole('button', { name: 'login' }).click()
@@ -35,12 +33,15 @@ test.describe('Blog app', () => {
 
     test('fails with wrong credentials', async ({ page }) => {
       const inputs = page.getByRole('textbox')
+
       await inputs.nth(0).fill('mluukkai')
       await inputs.nth(1).fill('wrong')
       await page.getByRole('button', { name: 'login' }).click()
       await expect(page.getByText('wrong username or password')).toBeVisible()
+      await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
     })
   })
+
   test.describe('When logged in', () => {
     test.beforeEach(async ({ page }) => {
       const inputs = page.getByRole('textbox')
@@ -51,16 +52,34 @@ test.describe('Blog app', () => {
       await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
     })
 
-  test('a new blog can be created', async ({ page }) => {
-    await page.getByRole('button', { name: 'create new blog' }).click()
+    test('a new blog can be created', async ({ page }) => {
+      const title = `Playwright testing ${Date.now()}`
+      await page.getByRole('button', { name: 'create new blog' }).click()
 
-    const inputs = page.getByRole('textbox')
+      const inputs = page.getByRole('textbox')
+      await inputs.nth(0).fill(title)
+      await inputs.nth(1).fill('Katri')
+      await inputs.nth(2).fill('http://playwright.test')
+      await page.getByRole('button', { name: 'create' }).click()
+      await expect(page.locator('.blog').filter({ hasText: `${title} Katri` }).first()).toBeVisible()
+    })
 
-    await inputs.nth(0).fill('Playwright testing')
-    await inputs.nth(1).fill('Katri')
-    await inputs.nth(2).fill('http://playwright.test')
-    await page.getByRole('button', { name: 'create' }).click()
-    await expect(page.getByText('Playwright testing Katri')).toBeVisible()
+    test('a blog can be liked', async ({ page }) => {
+      const title = `Blog to like ${Date.now()}`
+      await page.getByRole('button', { name: 'create new blog' }).click()
+
+      const inputs = page.getByRole('textbox')
+      await inputs.nth(0).fill(title)
+      await inputs.nth(1).fill('Katri')
+      await inputs.nth(2).fill('http://like.test')
+      await page.getByRole('button', { name: 'create' }).click()
+
+      const blog = page.locator('.blog').filter({ hasText: `${title} Katri` }).first()
+      await expect(blog).toBeVisible()
+      await blog.getByRole('button', { name: 'view' }).click()
+      await expect(blog.getByText('likes 0')).toBeVisible()
+      await blog.getByRole('button', { name: 'like' }).click()
+      await expect(blog.getByText('likes 1')).toBeVisible()
+    })
   })
-})
 })

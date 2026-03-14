@@ -15,7 +15,7 @@ const Blog = ({ blog, likeBlog, removeBlog, user }) => {
   blogUserId === loggedUserId || blog.user?.username === user?.username
 
   return (
-    <div style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       {!showDetails ? (
         <div>
           {blog.title} {blog.author}
