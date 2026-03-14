@@ -22,4 +22,23 @@ test.describe('Blog app', () => {
 
     
   })
+
+  test.describe('Login', () => {
+
+    test('succeeds with correct credentials', async ({ page }) => {
+      const inputs = page.getByRole('textbox')
+      await inputs.nth(0).fill('mluukkai')
+      await inputs.nth(1).fill('salainen')
+      await page.getByRole('button', { name: 'login' }).click()
+      await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
+    })
+
+    test('fails with wrong credentials', async ({ page }) => {
+      const inputs = page.getByRole('textbox')
+      await inputs.nth(0).fill('mluukkai')
+      await inputs.nth(1).fill('wrong')
+      await page.getByRole('button', { name: 'login' }).click()
+      await expect(page.getByText('wrong username or password')).toBeVisible()
+    })
+  })
 })
